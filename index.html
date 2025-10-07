@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📈 TraderHub - Social Trading Platform</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-bg: #1f2937;
+            --light-bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--light-bg) 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .tech-badge {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            margin: 0.25rem;
+            display: inline-block;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background: var(--secondary-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+        }
+
+        .github-link {
+            color: var(--dark-bg);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .github-link:hover {
+            color: var(--secondary-color);
+        }
+
+        .stats-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .code-snippet {
+            background: var(--dark-bg);
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 2rem 0;
+            }
+            
+            .feature-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--primary-color);">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fas fa-chart-line me-2"></i>TraderHub
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#demo">Demo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#tech">Technology</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#setup">Setup</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container hero-content">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1 class="display-4 fw-bold mb-4">
+                        <i class="fas fa-chart-line me-3"></i>TraderHub
+                    </h1>
+                    <p class="lead mb-4">
+                        A comprehensive social media platform for stock traders to share insights, 
+                        discuss market trends, and connect with fellow investors.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="#demo" class="btn btn-light btn-lg">
+                            <i class="fas fa-play me-2"></i>View Demo
+                        </a>
+                        <a href="https://github.com/yourusername/traderhub" class="btn btn-outline-light btn-lg github-link">
+                            <i class="fab fa-github me-2"></i>View on GitHub
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-center">
+                        <canvas id="heroChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">500+</div>
+                        <div class="text-muted">Users</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">1,200+</div>
+                        <div class="text-muted">Posts</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">50+</div>
+                        <div class="text-muted">Stocks Tracked</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">99.9%</div>
+                        <div class="text-muted">Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">🌟 Key Features</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon bg-primary text-white">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4>User Authentication</h4>
+                        <p>Secure registration and login system with JWT tokens and session management.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>JWT Authentication</li>
+                            <li><i class="fas fa-check text-success me-2"></i>User Profiles</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Secure Sessions</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon bg-success text-white">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <h4>Trading Posts</h4>
+                        <p>Share market insights with ticker symbols and engage with the trading community.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Stock Mentions</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Rich Text Posts</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Community Engagement</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon bg-info text-white">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h4>Analytics Dashboard</h4>
+                        <p>Visualize trading discussions and trends with interactive charts and graphs.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Real-time Charts</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Trend Analysis</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Data Visualization</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon bg-warning text-white">
+                            <i class="fas fa-stream"></i>
+                        </div>
+                        <h4>Real-time Feed</h4>
+                        <p>Browse all posts or filter by specific stocks with live data refresh.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Live Updates</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Stock Filtering</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Custom Feeds</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon bg-danger text-white">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h4>Responsive Design</h4>
+                        <p>Beautiful, mobile-friendly interface that works seamlessly across all devices.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>Mobile Optimized</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Cross-platform</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Modern UI/UX</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card h-100">
+                        <div class="feature-icon bg-secondary text-white">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h4>RESTful API</h4>
+                        <p>FastAPI backend with comprehensive endpoints for all platform functionality.</p>
+                        <ul class="list-unstyled">
+                            <li><i class="fas fa-check text-success me-2"></i>FastAPI Framework</li>
+                            <li><i class="fas fa-check text-success me-2"></i>OpenAPI Docs</li>
+                            <li><i class="fas fa-check text-success me-2"></i>High Performance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">🚀 Live Demo</h2>
+            <div class="demo-section">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h4 class="mb-3">Interactive Trading Feed</h4>
+                        <div class="border rounded p-3 mb-3" style="height: 300px; overflow-y: auto; background: #f8f9fa;">
+                            <div class="mb-3 p-3 bg-white rounded shadow-sm">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user-circle text-primary me-2"></i>
+                                    <strong>@trader_john</strong>
+                                    <small class="text-muted ms-auto">2 hours ago</small>
+                                </div>
+                                <p class="mb-2">Great bullish momentum on $AAPL today! 📈 The tech sector is showing strong recovery signals.</p>
+                                <span class="badge bg-success">$AAPL</span>
+                                <span class="badge bg-info">Tech</span>
+                            </div>
+                            <div class="mb-3 p-3 bg-white rounded shadow-sm">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user-circle text-success me-2"></i>
+                                    <strong>@market_maven</strong>
+                                    <small class="text-muted ms-auto">4 hours ago</small>
+                                </div>
+                                <p class="mb-2">$TSLA breaking resistance at $250. Could see a run to $280 if volume continues. 🚗⚡</p>
+                                <span class="badge bg-success">$TSLA</span>
+                                <span class="badge bg-warning">Automotive</span>
+                            </div>
+                            <div class="mb-3 p-3 bg-white rounded shadow-sm">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-user-circle text-info me-2"></i>
+                                    <strong>@crypto_trader</strong>
+                                    <small class="text-muted ms-auto">6 hours ago</small>
+                                </div>
+                                <p class="mb-2">Keep an eye on $NVDA earnings next week. AI hype could drive significant movement. 🤖</p>
+                                <span class="badge bg-success">$NVDA</span>
+                                <span class="badge bg-primary">AI</span>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Share your trading insights... (mention stocks with $SYMBOL)">
+                            <button class="btn btn-primary" type="button">
+                                <i class="fas fa-paper-plane"></i> Post
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <h4 class="mb-3">Trending Stocks</h4>
+                        <canvas id="trendingChart" width="300" height="200"></canvas>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>$AAPL</span>
+                                <span class="text-success">+2.5% <i class="fas fa-arrow-up"></i></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>$TSLA</span>
+                                <span class="text-success">+1.8% <i class="fas fa-arrow-up"></i></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span>$NVDA</span>
+                                <span class="text-danger">-0.5% <i class="fas fa-arrow-down"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack -->
+    <section id="tech" class="py-5">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">🛠️ Technology Stack</h2>
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="demo-section">
+                        <h4 class="mb-3">Backend Technologies</h4>
+                        <div class="mb-3">
+                            <span class="tech-badge">FastAPI</span>
+                            <span class="tech-badge">SQLAlchemy</span>
+                            <span class="tech-badge">SQLite</span>
+                            <span class="tech-badge">Pydantic</span>
+                            <span class="tech-badge">JWT</span>
+                            <span class="tech-badge">Python 3.11+</span>
+                        </div>
+                        <h5>Key Backend Features:</h5>
+                        <ul>
+                            <li>RESTful API with automatic OpenAPI documentation</li>
+                            <li>SQLAlchemy ORM for database operations</li>
+                            <li>JWT-based authentication system</li>
+                            <li>Pydantic models for data validation</li>
+                            <li>Asynchronous request handling</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="demo-section">
+                        <h4 class="mb-3">Frontend Technologies</h4>
+                        <div class="mb-3">
+                            <span class="tech-badge">Streamlit</span>
+                            <span class="tech-badge">Plotly</span>
+                            <span class="tech-badge">HTML5</span>
+                            <span class="tech-badge">CSS3</span>
+                            <span class="tech-badge">JavaScript</span>
+                            <span class="tech-badge">Bootstrap</span>
+                        </div>
+                        <h5>Key Frontend Features:</h5>
+                        <ul>
+                            <li>Interactive Streamlit web application</li>
+                            <li>Real-time data visualization with Plotly</li>
+                            <li>Responsive design with Bootstrap</li>
+                            <li>Dynamic content filtering and search</li>
+                            <li>Modern UI components and animations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Setup Instructions -->
+    <section id="setup" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">⚡ Quick Setup</h2>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="demo-section">
+                        <h4 class="mb-3">Get Started in 3 Steps</h4>
+                        
+                        <div class="mb-4">
+                            <h5><span class="badge bg-primary me-2">1</span>Clone the Repository</h5>
+                            <div class="code-snippet">
+git clone https://github.com/yourusername/traderhub.git
+cd traderhub
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5><span class="badge bg-primary me-2">2</span>Install Dependencies</h5>
+                            <div class="code-snippet">
+pip install fastapi uvicorn sqlalchemy pydantic streamlit plotly
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5><span class="badge bg-primary me-2">3</span>Run the Application</h5>
+                            <div class="code-snippet">
+# Start the FastAPI backend
+python launch_traderhub.py
+
+# Or use the provided scripts
+# Windows: start.bat
+# Linux/Mac: ./start.sh
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <p class="mb-3">The application will be available at:</p>
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="http://localhost:8000" class="btn btn-primary">
+                                    <i class="fas fa-server me-2"></i>API (Port 8000)
+                                </a>
+                                <a href="http://localhost:8501" class="btn btn-success">
+                                    <i class="fas fa-desktop me-2"></i>Web App (Port 8501)
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4" style="background-color: var(--primary-color);">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-chart-line me-2"></i>TraderHub
+                    </h5>
+                    <p class="text-white-50 mb-0">Social Trading Platform</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="https://github.com/yourusername/traderhub" class="text-white me-3">
+                        <i class="fab fa-github fa-lg"></i>
+                    </a>
+                    <a href="#" class="text-white me-3">
+                        <i class="fab fa-twitter fa-lg"></i>
+                    </a>
+                    <a href="#" class="text-white">
+                        <i class="fab fa-linkedin fa-lg"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Hero Chart
+        const heroCtx = document.getElementById('heroChart').getContext('2d');
+        new Chart(heroCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Trading Activity',
+                    data: [65, 78, 90, 81, 95, 110],
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: 'white'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: 'white'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Trending Chart
+        const trendingCtx = document.getElementById('trendingChart').getContext('2d');
+        new Chart(trendingCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['AAPL', 'TSLA', 'NVDA', 'MSFT', 'GOOGL'],
+                datasets: [{
+                    data: [30, 25, 20, 15, 10],
+                    backgroundColor: [
+                        '#3b82f6',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444',
+                        '#8b5cf6'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15
+                        }
+                    }
+                }
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add typing animation to hero text
+        const heroText = document.querySelector('.display-4');
+        const originalText = heroText.innerHTML;
+        heroText.innerHTML = '';
+        
+        let i = 0;
+        function typeWriter() {
+            if (i < originalText.length) {
+                heroText.innerHTML += originalText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+        
+        // Start typing animation after a short delay
+        setTimeout(typeWriter, 500);
+    </script>
+</body>
+</html>
